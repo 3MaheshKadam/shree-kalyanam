@@ -1,0 +1,36 @@
+|-- .expo
+    |-- devices.json
+    |-- README.md
+|-- .gitignore
+|-- app-env.d.ts
+|-- app.json
+|-- App.jsx
+|-- assets
+    |-- adaptive-icon.png
+    |-- favicon.png
+    |-- icon.png
+    |-- splash.png
+|-- babel.config.js
+|-- cesconfig.jsonc
+|-- components
+    |-- Container.tsx
+    |-- EditScreenInfo.tsx
+    |-- ScreenContent.tsx
+|-- context
+    |-- SessionContext.js
+|-- eas.json
+|-- eslint.config.js
+|-- global.css
+|-- metro.config.js
+|-- nativewind-env.d.ts
+|-- package-lock.json
+|-- package.json
+|-- prettier.config.js
+|-- screens
+    |-- InterestsScreen.jsx
+    |-- LoginScreen.jsx
+    |-- MatchesScreen.jsx
+    |-- ProfileScreen.jsx
+    |-- SettingsScreen.jsx
+|-- tailwind.config.js
+|-- tsconfig.json

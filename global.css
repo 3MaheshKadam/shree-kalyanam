@@ -1,0 +1,210 @@
+/* Added NativeWind configuration and custom styles for React Native */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom gradient utilities for React Native */
+.bg-gradient-to-r {
+  background: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+/* Animation utilities */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Transform utilities */
+.transform {
+  transform: translateX(var(--tw-translate-x, 0)) translateY(var(--tw-translate-y, 0)) rotate(var(--tw-rotate, 0))
+    skewX(var(--tw-skew-x, 0)) skewY(var(--tw-skew-y, 0)) scaleX(var(--tw-scale-x, 1)) scaleY(var(--tw-scale-y, 1));
+}
+
+.translate-y-0 {
+  --tw-translate-y: 0px;
+}
+
+.translate-y-4 {
+  --tw-translate-y: 1rem;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+/* Transition utilities */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-1000 {
+  transition-duration: 1000ms;
+}
+
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+/* Additional utilities for improved styling */
+.font-bold {
+  font-weight: bold;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Utility for responsive design */
+@media (max-width: 600px) {
+  .responsive-padding {
+    padding: 1rem;
+  }
+}
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #475569;
+  --card: #f1f5f9;
+  --card-foreground: #475569;
+  --popover: #ffffff;
+  --popover-foreground: #475569;
+  --primary: #059669;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #475569;
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+  --accent: #10b981;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --ring: rgba(14, 165, 233, 0.5);
+  --chart-1: #059669;
+  --chart-2: #10b981;
+  --chart-3: #f97316;
+  --chart-4: #dc2626;
+  --chart-5: #4b5563;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #475569;
+  --sidebar-primary: #059669;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #10b981;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: rgba(14, 165, 233, 0.5);
+}
+
+.dark {
+  --background: #1f2937;
+  --foreground: #f9fafb;
+  --card: #374151;
+  --card-foreground: #f9fafb;
+  --popover: #374151;
+  --popover-foreground: #f9fafb;
+  --primary: #10b981;
+  --primary-foreground: #ffffff;
+  --secondary: #4b5563;
+  --secondary-foreground: #f9fafb;
+  --muted: #4b5563;
+  --muted-foreground: #9ca3af;
+  --accent: #059669;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #4b5563;
+  --input: #374151;
+  --ring: rgba(14, 165, 233, 0.5);
+  --chart-1: #10b981;
+  --chart-2: #059669;
+  --chart-3: #f97316;
+  --chart-4: #ef4444;
+  --chart-5: #6b7280;
+  --sidebar: #1f2937;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #059669;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #4b5563;
+  --sidebar-ring: rgba(14, 165, 233, 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

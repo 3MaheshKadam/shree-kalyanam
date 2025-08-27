@@ -1,10 +1,10 @@
 |-- .expo
-    |-- devices.json
     |-- README.md
+    |-- devices.json
 |-- .gitignore
+|-- App.jsx
 |-- app-env.d.ts
 |-- app.json
-|-- App.jsx
 |-- assets
     |-- adaptive-icon.png
     |-- favicon.png

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, Modal, SafeAreaView, StatusBar, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, Modal, SafeAreaView, StatusBar, ScrollView, Platform } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSession } from 'context/SessionContext';
@@ -175,16 +175,18 @@ const InterestsScreen = () => {
 
   const getStatusBadge = (status) => {
     const badgeStyles = {
-      pending: { backgroundColor: '#fef3c7', color: '#b45309', icon: 'time-outline' },
-      accepted: { backgroundColor: '#dcfce7', color: '#15803d', icon: 'checkmark-circle-outline' },
-      declined: { backgroundColor: '#fee2e2', color: '#b91c1c', icon: 'close-circle-outline' },
+      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: 'time-outline' },
+      accepted: { bg: 'bg-green-100', text: 'text-green-800', icon: 'checkmark-circle-outline' },
+      declined: { bg: 'bg-red-100', text: 'text-red-800', icon: 'close-circle-outline' },
     };
-    const { backgroundColor, color, icon } = badgeStyles[status] || {};
-    if (!backgroundColor) return null;
+    const { bg, text, icon } = badgeStyles[status] || {};
+    if (!bg) return null;
     return (
-      <View style={[styles.badge, { backgroundColor }]}>
-        <Ionicons name={icon} size={12} color={color} style={{ marginRight: 4 }} />
-        <Text style={[styles.badgeText, { color }]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Text>
+      <View className={`flex-row items-center px-2 py-1 rounded-full ${bg}`}>
+        <Ionicons name={icon} size={12} className={`${text} mr-1`} />
+        <Text className={`text-xs font-medium ${text}`}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </Text>
       </View>
     );
   };
@@ -198,24 +200,24 @@ const InterestsScreen = () => {
   const stats = getTabStats();
 
   const renderTabBar = () => (
-    <View style={styles.tabBar}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScrollContent}>
+    <View className="bg-white py-2 border-b border-gray-200">
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, gap: 8 }}>
         {[
           { id: 'received', label: 'Received', icon: 'mail-outline', count: receivedInterests.length },
           { id: 'sent', label: 'Sent', icon: 'send-outline', count: sentInterests.length },
         ].map((tab, index) => (
           <Reanimated.View key={tab.id} entering={FadeIn.delay(index * 100).duration(300)}>
             <TouchableOpacity
-              style={[styles.tab, activeTab === tab.id && styles.activeTab]}
+              className={`py-2.5 px-4 rounded-lg mx-1 ${activeTab === tab.id ? 'bg-rose-100' : ''}`}
               onPress={() => setActiveTab(tab.id)}
             >
-              <View style={styles.tabContent}>
+              <View className="flex-row items-center">
                 <Ionicons
                   name={tab.icon}
                   size={16}
-                  color={activeTab === tab.id ? '#ec4899' : '#6b7280'}
+                  className={activeTab === tab.id ? 'text-rose-500' : 'text-gray-500'}
                 />
-                <Text style={[styles.tabText, activeTab === tab.id && styles.activeTabText]}>
+                <Text className={`text-sm font-medium ml-1.5 ${activeTab === tab.id ? 'text-rose-500 font-semibold' : 'text-gray-500'}`}>
                   {tab.label} ({tab.count})
                 </Text>
               </View>
@@ -234,11 +236,11 @@ const InterestsScreen = () => {
     const displayName = profile?.privacySettings?.showname && hasSubscription ? profile?.name : maskFirstName(profile?.name);
 
     return (
-      <Reanimated.View entering={FadeIn.duration(300)} style={styles.cardContainer}>
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
+      <Reanimated.View entering={FadeIn.duration(300)} className="mx-4 my-2">
+        <View className="bg-white rounded-lg shadow-md border border-gray-100">
+          <View className="flex-row p-3">
             <TouchableOpacity
-              style={[styles.profileImageContainer, !hasSubscription && profileImage && styles.blurredImage]}
+              className={`w-16 h-16 rounded-full overflow-hidden mr-3 ${!hasSubscription && profileImage ? 'opacity-50' : ''}`}
               onPress={() => {
                 if (!hasSubscription || !profile?.privacySettings?.showPhoto) {
                   navigation.navigate('Subscription');
@@ -249,93 +251,93 @@ const InterestsScreen = () => {
             >
               <LinearGradient
                 colors={['#ff69b4', '#ff1493']}
-                style={styles.profileImageGradient}
+                className="flex-1 justify-center items-center"
               >
                 {profileImage ? (
                   <>
                     <Image
                       source={{ uri: profileImage }}
-                      style={styles.profileImage}
+                      className="w-full h-full"
                       resizeMode="cover"
                     />
                     {(!hasSubscription || !profile?.privacySettings?.showPhoto) && (
-                      <View style={styles.lockOverlay}>
-                        <Ionicons name="lock-closed-outline" size={20} color="#fff" />
+                      <View className="absolute inset-0 justify-center items-center bg-black/30">
+                        <Ionicons name="lock-closed-outline" size={20} className="text-white" />
                       </View>
                     )}
                   </>
                 ) : (
-                  <Ionicons name="person-outline" size={24} color="#fff" />
+                  <Ionicons name="person-outline" size={24} className="text-white" />
                 )}
               </LinearGradient>
               {profile?.lastLoginAt && new Date().getTime() - new Date(profile.lastLoginAt).getTime() < 24 * 60 * 60 * 1000 && (
-                <View style={styles.onlineIndicator} />
+                <View className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
               )}
             </TouchableOpacity>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTitleRow}>
-                <View style={styles.cardTitle}>
-                  <Text style={styles.nameText}>{displayName}</Text>
+            <View className="flex-1">
+              <View className="flex-row justify-between items-center mb-1.5">
+                <View className="flex-row items-center">
+                  <Text className="text-lg font-semibold text-gray-900">{displayName}</Text>
                   {profile?.isVerified && (
-                    <Ionicons name="shield-checkmark-outline" size={16} color="#15803d" style={{ marginLeft: 4 }} />
+                    <Ionicons name="shield-checkmark-outline" size={16} className="text-green-800 ml-1" />
                   )}
                 </View>
                 {getStatusBadge(person.status)}
               </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>
-                  <Ionicons name="calendar-outline" size={12} color="#6b7280" /> {calculateAge(profile?.dob)} years
+              <View className="flex-row flex-wrap mb-1 gap-2">
+                <Text className="text-xs text-gray-500">
+                  <Ionicons name="calendar-outline" size={12} className="text-gray-500" /> {calculateAge(profile?.dob)} years
                 </Text>
-                {profile?.caste && <Text style={styles.infoText}>{profile?.caste}</Text>}
+                {profile?.caste && <Text className="text-xs text-gray-500">{profile?.caste}</Text>}
               </View>
-              <View style={styles.infoRow}>
+              <View className="flex-row flex-wrap gap-2">
                 {profile?.currentCity && (
-                  <Text style={styles.infoText}>
-                    <Ionicons name="location-outline" size={12} color="#6b7280" /> {profile?.currentCity}
+                  <Text className="text-xs text-gray-500">
+                    <Ionicons name="location-outline" size={12} className="text-gray-500" /> {profile?.currentCity}
                   </Text>
                 )}
                 {(profile?.occupation || profile?.education) && (
-                  <Text style={styles.infoText}>
-                    <Ionicons name="briefcase-outline" size={12} color="#6b7280" /> {profile?.occupation || profile?.education || 'Not specified'}
+                  <Text className="text-xs text-gray-500">
+                    <Ionicons name="briefcase-outline" size={12} className="text-gray-500" /> {profile?.occupation || profile?.education || 'Not specified'}
                   </Text>
                 )}
               </View>
             </View>
           </View>
-          <View style={styles.cardFooter}>
-            <Text style={styles.timestampText}>
+          <View className="flex-row justify-between items-center p-3 border-t border-gray-200">
+            <Text className="text-xs text-gray-500">
               {type === 'sent' ? `Sent: ${new Date(person.createdAt).toLocaleDateString()}` : `Received: ${new Date(person.createdAt).toLocaleDateString()}`}
             </Text>
-            <View style={styles.actionButtons}>
+            <View className="flex-row flex-wrap justify-end gap-2">
               {type === 'received' && person.status === 'pending' && (
                 <>
                   <TouchableOpacity
-                    style={[styles.actionButton, { backgroundColor: '#fee2e2' }]}
+                    className="flex-row items-center px-3 py-2 rounded-lg bg-red-100"
                     onPress={() => handleInterestAction('declined', person._id)}
                   >
-                    <Ionicons name="close-outline" size={16} color="#b91c1c" style={{ marginRight: 4 }} />
-                    <Text style={[styles.actionButtonText, { color: '#b91c1c' }]}>Decline</Text>
+                    <Ionicons name="close-outline" size={16} className="text-red-800 mr-1" />
+                    <Text className="text-xs font-semibold text-red-800">Decline</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.actionButton, { backgroundColor: '#dcfce7' }]}
+                    className="flex-row items-center px-3 py-2 rounded-lg bg-green-100"
                     onPress={() => handleInterestAction('accepted', person._id)}
                   >
-                    <Ionicons name="checkmark-outline" size={16} color="#15803d" style={{ marginRight: 4 }} />
-                    <Text style={[styles.actionButtonText, { color: '#15803d' }]}>Accept</Text>
+                    <Ionicons name="checkmark-outline" size={16} className="text-green-800 mr-1" />
+                    <Text className="text-xs font-semibold text-green-800">Accept</Text>
                   </TouchableOpacity>
                 </>
               )}
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: '#ffe4e6' }]}
+                className="flex-row items-center px-3 py-2 rounded-lg bg-rose-100"
                 onPress={() => handleViewProfile(person, type)}
                 disabled={checkingSubscription}
               >
                 {checkingSubscription ? (
-                  <Ionicons name="refresh-outline" size={16} color="#ff1493" style={{ marginRight: 4 }} className="animate-spin" />
+                  <Ionicons name="refresh-outline" size={16} className="text-rose-500 mr-1 animate-spin" />
                 ) : (
                   <>
-                    <Ionicons name="eye-outline" size={16} color="#ff1493" style={{ marginRight: 4 }} />
-                    <Text style={[styles.actionButtonText, { color: '#ff1493' }]}>View Profile</Text>
+                    <Ionicons name="eye-outline" size={16} className="text-rose-500 mr-1" />
+                    <Text className="text-xs font-semibold text-rose-500">View Profile</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -347,30 +349,34 @@ const InterestsScreen = () => {
   };
 
   const ProfileDetailItem = ({ icon, label, value }) => (
-    <Reanimated.View entering={FadeIn.duration(200)} style={styles.detailRow}>
-      <MaterialCommunityIcons name={icon} size={20} color="#ff1493" style={{ marginRight: 12 }} />
-      <View style={{ flex: 1 }}>
-        <Text style={styles.detailLabel}>{label}</Text>
-        <Text style={styles.detailValue}>{value || 'Not specified'}</Text>
+    <Reanimated.View entering={FadeIn.duration(200)} className="flex-row items-center mb-3">
+      <MaterialCommunityIcons name={icon} size={20} className="text-rose-500 mr-3" />
+      <View className="flex-1">
+        <Text className="text-sm font-semibold text-gray-900">{label}</Text>
+        <Text className="text-sm text-gray-600">{value || 'Not specified'}</Text>
       </View>
     </Reanimated.View>
   );
 
   const ProfileSection = ({ title, children, sectionKey }) => (
-    <View style={styles.sectionContainer}>
-      <TouchableOpacity onPress={() => toggleSection(sectionKey)} style={styles.sectionHeader}>
-        <View style={styles.sectionTitleContainer}>
-          <Ionicons name={sectionKey === 'basic' ? 'person-outline' : sectionKey === 'professional' ? 'briefcase-outline' : sectionKey === 'family' ? 'people-outline' : sectionKey === 'astrological' ? 'star-outline' : 'heart-outline'} size={20} color="#ff1493" />
-          <Text style={styles.sectionTitle}>{title}</Text>
+    <View className="mb-4">
+      <TouchableOpacity onPress={() => toggleSection(sectionKey)} className="flex-row justify-between items-center py-2">
+        <View className="flex-row items-center gap-2">
+          <Ionicons
+            name={sectionKey === 'basic' ? 'person-outline' : sectionKey === 'professional' ? 'briefcase-outline' : sectionKey === 'family' ? 'people-outline' : sectionKey === 'astrological' ? 'star-outline' : 'heart-outline'}
+            size={20}
+            className="text-rose-500"
+          />
+          <Text className="text-base font-semibold text-gray-900">{title}</Text>
         </View>
         <Ionicons
           name={expandedSections[sectionKey] ? 'chevron-up' : 'chevron-down'}
           size={20}
-          color="#6b7280"
+          className="text-gray-500"
         />
       </TouchableOpacity>
       {expandedSections[sectionKey] && (
-        <Reanimated.View entering={FadeIn.duration(200)} style={styles.sectionContent}>
+        <Reanimated.View entering={FadeIn.duration(200)} className="bg-gray-50 rounded-lg p-3">
           {children}
         </Reanimated.View>
       )}
@@ -379,11 +385,11 @@ const InterestsScreen = () => {
 
   if (isLoading && !isRefreshing) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView className="flex-1 bg-gray-50">
         <StatusBar barStyle="light-content" backgroundColor="#ff69b4" />
-        <View style={styles.loadingContainer}>
-          <Ionicons name="refresh-outline" size={48} color="#ff1493" style={{ marginBottom: 16 }} className="animate-spin" />
-          <Text style={styles.loadingText}>Loading your Interests</Text>
+        <View className="flex-1 justify-center items-center">
+          <Ionicons name="refresh-outline" size={48} className="text-rose-500 mb-4 animate-spin" />
+          <Text className="text-base text-gray-500 font-medium">Loading your Interests</Text>
         </View>
       </SafeAreaView>
     );
@@ -391,16 +397,16 @@ const InterestsScreen = () => {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView className="flex-1 bg-gray-50">
         <StatusBar barStyle="light-content" backgroundColor="#ff69b4" />
-        <View style={styles.errorContainer}>
-          <View style={styles.errorIconContainer}>
-            <Ionicons name="close-circle-outline" size={48} color="#b91c1c" />
+        <View className="flex-1 justify-center items-center p-4">
+          <View className="w-16 h-16 bg-red-100 rounded-full justify-center items-center mb-4">
+            <Ionicons name="close-circle-outline" size={48} className="text-red-800" />
           </View>
-          <Text style={styles.errorTitle}>Error loading interests</Text>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
-            <Text style={styles.retryButtonText}>Try Again</Text>
+          <Text className="text-lg font-bold text-gray-900 mb-2">Error loading interests</Text>
+          <Text className="text-sm text-gray-500 text-center mb-4">{error}</Text>
+          <TouchableOpacity className="bg-rose-500 rounded-lg py-3 px-6" onPress={handleRefresh}>
+            <Text className="text-sm font-semibold text-white">Try Again</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -408,30 +414,29 @@ const InterestsScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-gray-50 p-1 mt-8 " >
       <StatusBar barStyle="light-content" backgroundColor="#ff69b4" />
-      <LinearGradient colors={['#ff69b4', '#ff1493']} style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>💌 Interests</Text>
-            <Text style={styles.headerSubText}>Connect with your potential matches</Text>
+      <LinearGradient colors={['#ff69b4', '#ff1493']} className={`pt-[${Platform.OS === 'ios' ? 10 : StatusBar.currentHeight + 10}] px-4 pb-4`}>
+        <View className="flex-row justify-between items-center flex-wrap">
+          <View className="flex-1 min-w-[150px]">
+            <Text className="text-3xl font-bold text-white font-[Helvetica Neue, Roboto]">💌 Interests</Text>
+            <Text className="text-sm text-white font-normal">Connect with your potential matches</Text>
           </View>
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Pending Received</Text>
-              <Text style={styles.statValue}>{stats.pendingReceived || 0}</Text>
+          <View className="flex-row items-center mx-2">
+            <View className="items-center ml-3">
+              <Text className="text-xs text-white font-medium">Pending Received</Text>
+              <Text className="text-base font-bold text-white">{stats.pendingReceived || 0}</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Pending Sent</Text>
-              <Text style={styles.statValue}>{stats.pendingSent || 0}</Text>
+            <View className="items-center ml-3">
+              <Text className="text-xs text-white font-medium">Pending Sent</Text>
+              <Text className="text-base font-bold text-white">{stats.pendingSent || 0}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh} disabled={isRefreshing}>
+          <TouchableOpacity className="p-2 bg-white/20 rounded-lg" onPress={handleRefresh} disabled={isRefreshing}>
             <Ionicons
               name="refresh-outline"
               size={24}
-              color={isRefreshing ? '#d1d5db' : '#fff'}
-              style={isRefreshing && styles.refreshIcon}
+              className={isRefreshing ? 'text-gray-300 animate-spin' : 'text-white'}
             />
           </TouchableOpacity>
         </View>
@@ -441,16 +446,16 @@ const InterestsScreen = () => {
         data={getTabData()}
         renderItem={({ item }) => <InterestCard person={item} type={activeTab} />}
         keyExtractor={(item, index) => item._id || `interest-${index}`}
-        contentContainerStyle={styles.flatListContent}
+        contentContainerStyle={{ paddingBottom: 100 }}
         ListEmptyComponent={
-          <Reanimated.View entering={FadeIn.duration(300)} style={styles.emptyContainer}>
-            <View style={styles.emptyIconContainer}>
-              <Ionicons name="heart-outline" size={48} color="#ff1493" />
+          <Reanimated.View entering={FadeIn.duration(300)} className="items-center p-8 min-h-[400px]">
+            <View className="w-16 h-16 bg-rose-100 rounded-full justify-center items-center mb-4">
+              <Ionicons name="heart-outline" size={48} className="text-rose-500" />
             </View>
-            <Text style={styles.emptyTitle}>
+            <Text className="text-lg font-bold text-gray-900 mb-2">
               {activeTab === 'sent' ? 'No Interests Sent Yet' : 'No Interests Received Yet'}
             </Text>
-            <Text style={styles.emptyText}>
+            <Text className="text-sm text-gray-500 text-center">
               {activeTab === 'sent'
                 ? 'Start browsing profiles and express your interest!'
                 : 'Your perfect match might be just around the corner!'}
@@ -459,45 +464,45 @@ const InterestsScreen = () => {
         }
         refreshing={isRefreshing}
         onRefresh={handleRefresh}
-        style={styles.flatListStyle}
+        className="flex-1"
       />
       <Modal
         visible={showModal && !!selectedProfile}
         animationType="slide"
         onRequestClose={() => setShowModal(false)}
       >
-        <SafeAreaView style={styles.modalContainer}>
+        <SafeAreaView className="flex-1 bg-gray-50">
           <StatusBar barStyle="light-content" backgroundColor="#ff69b4" />
-          <LinearGradient colors={['#ff69b4', '#ff1493']} style={styles.modalHeader}>
+          <LinearGradient colors={['#ff69b4', '#ff1493']} className="flex-row justify-between items-center px-4 py-3">
             <TouchableOpacity onPress={() => setShowModal(false)}>
-              <Ionicons name="close-outline" size={28} color="#fff" />
+              <Ionicons name="close-outline" size={28} className="text-white" />
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>{selectedProfile?.name}&apos;s Profile</Text>
+            <Text className="text-xl font-bold text-white">{selectedProfile?.name}&apos;s Profile</Text>
             <TouchableOpacity>
-              <Ionicons name="share-outline" size={28} color="#fff" />
+              <Ionicons name="share-outline" size={28} className="text-white" />
             </TouchableOpacity>
           </LinearGradient>
-          <ScrollView style={styles.modalContent}>
-            <View style={styles.modalProfileHeader}>
+          <ScrollView className="flex-1">
+            <View className="relative">
               <Image
                 source={{ uri: selectedProfile?.image }}
-                style={styles.modalProfileImage}
+                className="w-full h-72"
                 resizeMode="cover"
               />
               <LinearGradient
                 colors={['transparent', 'rgba(0,0,0,0.7)']}
-                style={styles.modalProfileGradient}
+                className="absolute bottom-0 left-0 right-0 h-32 p-4 justify-end"
               >
-                <Text style={styles.modalNameText}>{selectedProfile?.name}</Text>
-                <View style={styles.modalInfoContainer}>
-                  <Ionicons name="calendar-outline" size={16} color="#fff" />
-                  <Text style={styles.modalInfoText}>{calculateAge(selectedProfile?.dob)} years</Text>
-                  <Ionicons name="location-outline" size={16} color="#fff" style={{ marginLeft: 12 }} />
-                  <Text style={styles.modalInfoText}>{selectedProfile?.currentCity || 'N/A'}</Text>
+                <Text className="text-2xl font-bold text-white mb-1">{selectedProfile?.name}</Text>
+                <View className="flex-row items-center gap-2">
+                  <Ionicons name="calendar-outline" size={16} className="text-white" />
+                  <Text className="text-sm text-white">{calculateAge(selectedProfile?.dob)} years</Text>
+                  <Ionicons name="location-outline" size={16} className="text-white ml-3" />
+                  <Text className="text-sm text-white">{selectedProfile?.currentCity || 'N/A'}</Text>
                 </View>
               </LinearGradient>
             </View>
-            <View style={styles.modalDetailsContainer}>
+            <View className="p-4 bg-white rounded-t-3xl -mt-6">
               <ProfileSection title="Basic Information" sectionKey="basic">
                 <ProfileDetailItem icon="human-male-height" label="Height" value={selectedProfile?.height} />
                 <ProfileDetailItem icon="account-outline" label="Gender" value={selectedProfile?.gender} />
@@ -532,17 +537,17 @@ const InterestsScreen = () => {
                 <ProfileDetailItem icon="human-male-height" label="Expected Height" value={selectedProfile?.expectedHeight} />
                 <ProfileDetailItem icon="currency-inr" label="Expected Income" value={selectedProfile?.expectedIncome} />
               </ProfileSection>
-              <View style={styles.modalActionButtons}>
+              <View className="flex-row gap-3 mt-4">
                 <TouchableOpacity
-                  style={styles.modalActionButton}
+                  className="flex-1 bg-rose-500 rounded-lg p-3 flex-row justify-center items-center"
                   onPress={() => handleInterestAction('accepted', selectedProfile?._id)}
                 >
-                  <Ionicons name="heart" size={20} color="#fff" style={{ marginRight: 8 }} />
-                  <Text style={styles.modalActionButtonText}>Send Interest</Text>
+                  <Ionicons name="heart" size={20} className="text-white mr-2" />
+                  <Text className="text-sm font-semibold text-white">Send Interest</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.modalActionButton, { backgroundColor: '#3b82f6' }]}>
-                  <Ionicons name="chatbubble" size={20} color="#fff" style={{ marginRight: 8 }} />
-                  <Text style={styles.modalActionButtonText}>Chat</Text>
+                <TouchableOpacity className="flex-1 bg-blue-500 rounded-lg p-3 flex-row justify-center items-center">
+                  <Ionicons name="chatbubble" size={20} className="text-white mr-2" />
+                  <Text className="text-sm font-semibold text-white">Chat</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -555,25 +560,25 @@ const InterestsScreen = () => {
         transparent={true}
         onRequestClose={() => setExpandedImage(null)}
       >
-        <View style={styles.imageViewerContainer}>
-          <LinearGradient colors={['#ff69b4', '#ff1493']} style={styles.imageViewerHeader}>
-            <View style={styles.imageViewerHeaderContent}>
-              <Ionicons name="heart-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-              <Text style={styles.imageViewerTitle}>Profile Picture</Text>
+        <View className="flex-1 bg-black/30 justify-center">
+          <LinearGradient colors={['#ff69b4', '#ff1493']} className="px-4 py-3">
+            <View className="flex-row items-center justify-between">
+              <Ionicons name="heart-outline" size={20} className="text-white mr-2" />
+              <Text className="text-base font-semibold text-white flex-1">Profile Picture</Text>
               <TouchableOpacity onPress={() => setExpandedImage(null)}>
-                <Ionicons name="close-outline" size={20} color="#fff" />
+                <Ionicons name="close-outline" size={20} className="text-white" />
               </TouchableOpacity>
             </View>
           </LinearGradient>
-          <View style={styles.imageViewerContent}>
+          <View className="flex-1 justify-center items-center p-4">
             <Image
               source={{ uri: expandedImage }}
-              style={styles.expandedImage}
+              className="w-full h-[80%] rounded-lg"
               resizeMode="contain"
             />
           </View>
-          <LinearGradient colors={['#ff69b4', '#ff1493']} style={styles.imageViewerFooter}>
-            <Text style={styles.imageViewerFooterText}>Shivbandhan Matrimony</Text>
+          <LinearGradient colors={['#ff69b4', '#ff1493']} className="py-3 items-center">
+            <Text className="text-sm font-medium text-white">Shivbandhan Matrimony</Text>
           </LinearGradient>
         </View>
       </Modal>
@@ -581,455 +586,5 @@ const InterestsScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f9fafb',
-  },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 10 : StatusBar.currentHeight + 10,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  headerTextContainer: {
-    flex: 1,
-    minWidth: 150,
-  },
-  headerText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#fff',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  headerSubText: {
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: '400',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  statItem: {
-    alignItems: 'center',
-    marginLeft: 12,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#fff',
-    fontWeight: '500',
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  refreshButton: {
-    padding: 8,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 12,
-  },
-  refreshIcon: {
-    transform: [{ rotate: '360deg' }],
-  },
-  tabBar: {
-    backgroundColor: '#fff',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  tabScrollContent: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    gap: 8,
-  },
-  tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginHorizontal: 4,
-  },
-  activeTab: {
-    backgroundColor: '#ffe4e6',
-  },
-  tabContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginLeft: 6,
-    fontWeight: '500',
-  },
-  activeTabText: {
-    color: '#ff1493',
-    fontWeight: '600',
-  },
-  cardContainer: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#f3f4f6',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    padding: 12,
-  },
-  profileImageContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: 'hidden',
-    marginRight: 12,
-  },
-  profileImageGradient: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  blurredImage: {
-    opacity: 0.5,
-  },
-  lockOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  onlineIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 12,
-    height: 12,
-    backgroundColor: '#22c55e',
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  cardTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  nameText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 4,
-    gap: 8,
-  },
-  infoText: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-  },
-  timestampText: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-    gap: 8,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  actionButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '500',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '500',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  errorIconContainer: {
-    width: 64,
-    height: 64,
-    backgroundColor: '#fee2e2',
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    backgroundColor: '#ff1493',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  retryButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    padding: 32,
-    minHeight: 400,
-  },
-  emptyIconContainer: {
-    width: 64,
-    height: 64,
-    backgroundColor: '#ffe4e6',
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#f9fafb',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  modalContent: {
-    flex: 1,
-  },
-  modalProfileHeader: {
-    position: 'relative',
-  },
-  modalProfileImage: {
-    width: '100%',
-    height: 280,
-  },
-  modalProfileGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 120,
-    padding: 16,
-    justifyContent: 'flex-end',
-  },
-  modalNameText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 4,
-  },
-  modalInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  modalInfoText: {
-    fontSize: 14,
-    color: '#fff',
-  },
-  modalDetailsContainer: {
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    marginTop: -24,
-  },
-  sectionContainer: {
-    marginBottom: 16,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  sectionTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  sectionContent: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 12,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  detailLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  detailValue: {
-    fontSize: 14,
-    color: '#4b5563',
-  },
-  modalActionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 16,
-  },
-  modalActionButton: {
-    flex: 1,
-    backgroundColor: '#ff1493',
-    borderRadius: 12,
-    padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalActionButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  imageViewerContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-  },
-  imageViewerHeader: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  imageViewerHeaderContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  imageViewerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    flex: 1,
-  },
-  imageViewerContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  expandedImage: {
-    width: '100%',
-    height: '80%',
-    borderRadius: 12,
-  },
-  imageViewerFooter: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  imageViewerFooterText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#fff',
-  },
-  flatListStyle: {
-    flex: 1,
-  },
-  flatListContent: {
-    paddingBottom: 100,
-  },
-});
 
 export default InterestsScreen;

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Platform, StyleSheet, Alert, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Platform, Alert, Dimensions } from 'react-native';
 import { useSession } from 'context/SessionContext';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -133,25 +133,19 @@ const NavigationButton = ({ item, currentView, setCurrentView }) => {
   }, [currentView, item.id]);
 
   return (
-    <Animated.View style={[animatedStyle, styles.navButtonContainer]}>
+    <Animated.View style={animatedStyle} className="mr-2">
       <TouchableOpacity
-        style={[
-          styles.sectionButton,
-          currentView === item.id && !item.action && styles.activeSectionButton,
-        ]}
+        className={`flex-row items-center px-3 py-2 rounded-xl ${currentView === item.id && !item.action ? 'bg-rose-500' : 'bg-transparent'}`}
         onPress={() => (item.action ? item.action() : setCurrentView(item.id))}
       >
         <Ionicons
           name={item.icon}
           size={20}
           color={currentView === item.id && !item.action ? '#FFF' : '#6B7280'}
-          style={styles.navIcon}
+          className="mr-2"
         />
         <Text
-          style={[
-            styles.sectionText,
-            currentView === item.id && !item.action && styles.activeSectionText,
-          ]}
+          className={`text-sm ${currentView === item.id && !item.action ? 'text-white font-semibold' : 'text-gray-500'}`}
         >
           {item.label}
         </Text>
@@ -162,14 +156,14 @@ const NavigationButton = ({ item, currentView, setCurrentView }) => {
 
 // Account settings component
 const AccountSettings = ({ accountData, setAccountData }) => (
-  <Animated.View entering={FadeIn} style={styles.section}>
-    <View style={[styles.card, styles.glassCard]}>
-      <View style={styles.cardHeader}>
+  <Animated.View entering={FadeIn} className="mb-4">
+    <View className="bg-white/95 rounded-xl p-4 mb-4 shadow shadow-black/10 border border-rose-100">
+      <View className="flex-row items-center mb-3">
         <Ionicons name="call-outline" size={20} color="#F43F5E" />
-        <Text style={styles.cardTitle}>Phone Number</Text>
+        <Text className="text-lg font-bold text-gray-900 ml-2">Phone Number</Text>
       </View>
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded-lg p-3 text-sm text-gray-900"
         value={accountData.phone}
         onChangeText={(text) => setAccountData({ ...accountData, phone: text })}
         placeholder="Enter your phone number"
@@ -230,56 +224,55 @@ const SubscriptionSettings = ({ plans, freePlan, loading, error, currentSubscrip
   };
 
   return (
-    <Animated.View entering={FadeIn} style={styles.section}>
-     
+    <Animated.View entering={FadeIn} className="mb-4">
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <Ionicons name="refresh-outline" size={40} color="#F43F5E" style={styles.spinner} />
-          <Text style={styles.loadingText}>Loading Subscription Plans</Text>
+        <View className="flex-1 justify-center items-center">
+          <Ionicons name="refresh-outline" size={40} color="#F43F5E" className="mb-3 animate-spin" />
+          <Text className="text-base text-gray-500">Loading Subscription Plans</Text>
         </View>
       ) : error ? (
-        <View style={styles.errorContainer}>
+        <View className="flex-1 justify-center items-center p-4">
           <Ionicons name="alert-circle-outline" size={40} color="#EF4444" />
-          <Text style={styles.errorTitle}>Error Loading Plans</Text>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <Text style={styles.retryButtonText}>Try Again</Text>
+          <Text className="text-lg font-bold text-gray-900 mt-2">Error Loading Plans</Text>
+          <Text className="text-sm text-gray-500 text-center mt-1">{error}</Text>
+          <TouchableOpacity className="bg-rose-500 px-4 py-3 rounded-lg mt-3" onPress={handleRetry}>
+            <Text className="text-white text-sm font-semibold">Try Again</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <>
-          <View style={styles.plansGrid}>
+          <View className={`flex-col ${width > 600 ? 'flex-row flex-wrap' : ''} justify-between gap-4`}>
             {freePlan && (
-              <View style={[styles.planCard, styles.glassCard]}>
+              <View className="bg-white/95 rounded-xl p-4 mb-4 shadow shadow-black/10 border border-rose-100 relative">
                 <LinearGradient
                   colors={getPlanConfig(freePlan.name).color}
-                  style={styles.planGradient}
+                  className="absolute top-0 bottom-0 left-0 right-0 rounded-xl opacity-10"
                 />
-                <View style={styles.planHeader}>
-                  <View style={[styles.planIconContainer, { backgroundColor: getPlanConfig(freePlan.name).bgColor }]}>
+                <View className="items-center mb-3">
+                  <View className={`w-16 h-16 rounded-full justify-center items-center mb-2 ${getPlanConfig(freePlan.name).bgColor}`}>
                     <Ionicons name={getPlanConfig(freePlan.name).icon} size={32} color={getPlanConfig(freePlan.name).textColor} />
                   </View>
-                  <Text style={styles.planTitle}>{freePlan.name}</Text>
-                  <View style={styles.planPriceContainer}>
-                    <Text style={[styles.planPrice, { color: getPlanConfig(freePlan.name).textColor }]}>
+                  <Text className="text-xl font-bold text-gray-900">{freePlan.name}</Text>
+                  <View className="flex-row items-center">
+                    <Text className={`text-2xl font-bold ${getPlanConfig(freePlan.name).textColor}`}>
                       ₹{formatPrice(freePlan.price)}
                     </Text>
-                    <Text style={styles.planDuration}>/forever</Text>
+                    <Text className="text-sm text-gray-500 ml-1">/forever</Text>
                   </View>
                 </View>
-                <View style={styles.features}>
+                <View className="mb-3">
                   {freePlan.features?.map((feature, idx) => (
-                    <View key={idx} style={styles.feature}>
+                    <View key={idx} className="flex-row items-center mb-2">
                       <Ionicons name="checkmark-circle-outline" size={20} color={getPlanConfig(freePlan.name).textColor} />
-                      <Text style={styles.featureText}>{feature}</Text>
+                      <Text className="text-sm text-gray-900 ml-2">{feature}</Text>
                     </View>
                   ))}
                 </View>
                 <TouchableOpacity
-                  style={[styles.subscribeButton, { backgroundColor: '#D1D5DB' }]}
+                  className="bg-gray-300 px-4 py-3 rounded-lg"
                   disabled
                 >
-                  <Text style={styles.subscribeButtonText}>
+                  <Text className="text-white text-sm font-semibold text-center">
                     {currentSubscription?.subscriptionId === freePlan._id ? '🎉 Currently Active' : 'Free Plan'}
                   </Text>
                 </TouchableOpacity>
@@ -291,41 +284,41 @@ const SubscriptionSettings = ({ plans, freePlan, loading, error, currentSubscrip
               const isButtonLoading = isSubscribing && activeButtonId === plan._id;
 
               return (
-                <View key={plan._id} style={[styles.planCard, !plan.isActive && styles.disabledCard, styles.glassCard]}>
+                <View key={plan._id} className={`bg-white/95 rounded-xl p-4 mb-4 shadow shadow-black/10 border border-rose-100 relative ${!plan.isActive && 'opacity-70'}`}>
                   <LinearGradient
                     colors={config.color}
-                    style={styles.planGradient}
+                    className="absolute top-0 bottom-0 left-0 right-0 rounded-xl opacity-10"
                   />
-                  <View style={styles.planHeader}>
-                    <View style={[styles.planIconContainer, { backgroundColor: config.bgColor }]}>
+                  <View className="items-center mb-3">
+                    <View className={`w-16 h-16 rounded-full justify-center items-center mb-2 ${config.bgColor}`}>
                       <Ionicons name={config.icon} size={32} color={config.textColor} />
                     </View>
-                    <Text style={styles.planTitle}>{plan.name}</Text>
-                    <View style={styles.planPriceContainer}>
-                      <Text style={[styles.planPrice, { color: config.textColor }]}>
+                    <Text className="text-xl font-bold text-gray-900">{plan.name}</Text>
+                    <View className="flex-row items-center">
+                      <Text className={`text-2xl font-bold ${config.textColor}`}>
                         ₹{formatPrice(plan.price)}
                       </Text>
-                      <Text style={styles.planDuration}>/{getDurationText(plan.durationInDays)}</Text>
+                      <Text className="text-sm text-gray-500 ml-1">/{getDurationText(plan.durationInDays)}</Text>
                     </View>
                   </View>
-                  <View style={styles.features}>
+                  <View className="mb-3">
                     {plan.features?.map((feature, idx) => (
-                      <View key={idx} style={styles.feature}>
+                      <View key={idx} className="flex-row items-center mb-2">
                         <Ionicons name="checkmark-circle-outline" size={20} color={config.textColor} />
-                        <Text style={styles.featureText}>{feature}</Text>
+                        <Text className="text-sm text-gray-900 ml-2">{feature}</Text>
                       </View>
                     ))}
                   </View>
-                  <View style={styles.statusBadge}>
-                    <View style={[styles.statusDot, { backgroundColor: plan.isActive ? '#15803D' : '#EF4444' }]} />
-                    <Text style={styles.statusText}>{plan.isActive ? 'Active' : 'Inactive'}</Text>
+                  <View className="flex-row items-center self-center bg-gray-100 px-2 py-1 rounded-xl mb-3">
+                    <View className={`w-2 h-2 rounded-full mr-1 ${plan.isActive ? 'bg-green-600' : 'bg-red-500'}`} />
+                    <Text className="text-xs text-gray-900">{plan.isActive ? 'Active' : 'Inactive'}</Text>
                   </View>
                   <TouchableOpacity
-                    style={[styles.subscribeButton, { backgroundColor: config.badgeColor }, (isButtonLoading || isCurrentPlan || !plan.isActive) && styles.disabledButton]}
+                    className={`px-4 py-3 rounded-lg ${config.badgeColor} ${(isButtonLoading || isCurrentPlan || !plan.isActive) && 'opacity-50'}`}
                     onPress={() => handleSubscription(plan)}
                     disabled={isButtonLoading || isCurrentPlan || !plan.isActive}
                   >
-                    <Text style={styles.subscribeButtonText}>
+                    <Text className="text-white text-sm font-semibold text-center">
                       {isButtonLoading ? 'Processing...' : isCurrentPlan ? '🎉 Currently Active' : 'Subscribe Now'}
                     </Text>
                   </TouchableOpacity>
@@ -333,8 +326,8 @@ const SubscriptionSettings = ({ plans, freePlan, loading, error, currentSubscrip
               );
             })}
           </View>
-          <View style={[styles.card, styles.glassCard]}>
-            <Text style={styles.cardTitle}>Frequently Asked Questions</Text>
+          <View className="bg-white/95 rounded-xl p-4 mb-4 shadow shadow-black/10 border border-rose-100">
+            <Text className="text-lg font-bold text-gray-900 mb-3">Frequently Asked Questions</Text>
             {[
               {
                 question: 'Can I change my subscription plan?',
@@ -349,9 +342,9 @@ const SubscriptionSettings = ({ plans, freePlan, loading, error, currentSubscrip
                 answer: 'Your new plan will take effect immediately, replacing your current subscription.',
               },
             ].map((faq, idx) => (
-              <View key={idx} style={styles.faqItem}>
-                <Text style={styles.faqQuestion}>{faq.question}</Text>
-                <Text style={styles.faqAnswer}>{faq.answer}</Text>
+              <View key={idx} className="mb-3 pb-3 border-b border-gray-200">
+                <Text className="text-sm font-semibold text-gray-900 mb-1">{faq.question}</Text>
+                <Text className="text-sm text-gray-500">{faq.answer}</Text>
               </View>
             ))}
           </View>
@@ -360,8 +353,6 @@ const SubscriptionSettings = ({ plans, freePlan, loading, error, currentSubscrip
     </Animated.View>
   );
 };
-
-// Delete account component
 
 // Main SettingsScreen component
 const SettingsScreen = () => {
@@ -540,7 +531,6 @@ const SettingsScreen = () => {
 
   const renderContent = () => {
     switch (currentView) {
-     
       case 'subscription':
         return (
           <SubscriptionSettings
@@ -558,7 +548,6 @@ const SettingsScreen = () => {
             navigation={navigation}
           />
         );
-     
       default:
         return <SubscriptionSettings
             plans={plans}
@@ -579,31 +568,31 @@ const SettingsScreen = () => {
 
   if (loading && currentView === 'subscription') {
     return (
-      <View style={styles.loadingContainer}>
-        <Ionicons name="refresh-outline" size={40} color="#F43F5E" style={styles.spinner} />
-        <Text style={styles.loadingText}>Loading Settings...</Text>
+      <View className="flex-1 justify-center items-center">
+        <Ionicons name="refresh-outline" size={40} color="#F43F5E" className="mb-3 animate-spin" />
+        <Text className="text-base text-gray-500">Loading Settings...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-gray-50">
       {/* Header */}
-      <LinearGradient colors={['#F43F5E', '#EC4899']} style={styles.header}>
-        <View style={styles.headerContent}>
+      <LinearGradient colors={['#F43F5E', '#EC4899']} className="p-5 pt-12 rounded-b-2xl">
+        <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back-outline" size={24} color="#FFF" />
           </TouchableOpacity>
-          <View>
-            <Text style={styles.headerTitle}>⚙️ Settings</Text>
-            <Text style={styles.headerSubtitle}>Manage your account preferences and privacy</Text>
+          <View className="ml-3">
+            <Text className="text-2xl font-bold text-white">⚙️ Settings</Text>
+            <Text className="text-sm text-rose-100 mt-1">Manage your account preferences and privacy</Text>
           </View>
         </View>
       </LinearGradient>
 
       {/* Main Content */}
-      <View style={styles.mainContent}>
-        <ScrollView horizontal style={styles.sidebar}>
+      <View className="flex-1 px-4">
+        <ScrollView horizontal className="bg-white/95 p-3 rounded-xl my-2 border border-gray-200 h-20">
           {navigationItems.map((item) => (
             <NavigationButton
               key={item.id}
@@ -613,45 +602,41 @@ const SettingsScreen = () => {
             />
           ))}
         </ScrollView>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 4 }}>
           {renderContent()}
-        
         </ScrollView>
       </View>
 
       {/* Delete Account Modal */}
       {showDeleteModal && (
-        <View style={styles.modalContainer}>
-          <View style={[styles.modal, styles.glassCard]}>
-            <View style={styles.modalHeader}>
+        <View className="absolute top-0 bottom-0 left-0 right-0 bg-black/50 justify-center items-center p-4">
+          <View className="bg-white/95 rounded-xl p-4 w-11/12 max-w-md shadow shadow-black/10">
+            <View className="flex-row items-center mb-3">
               <Ionicons name="alert-outline" size={24} color="#EF4444" />
-              <Text style={styles.modalTitle}>Confirm Account Deletion</Text>
+              <Text className="text-lg font-bold text-gray-900 ml-2">Confirm Account Deletion</Text>
             </View>
-            <Text style={styles.modalText}>
-              This action cannot be undone. Type <Text style={styles.bold}>DELETE</Text> to confirm.
+            <Text className="text-sm text-gray-500 mb-3">
+              This action cannot be undone. Type <Text className="font-bold">DELETE</Text> to confirm.
             </Text>
             <TextInput
-              style={styles.modalInput}
+              className="border border-gray-300 rounded-lg p-3 mb-3 text-sm"
               value={deleteConfirmation}
               onChangeText={setDeleteConfirmation}
               placeholder="Type DELETE to confirm"
             />
-            <View style={styles.modalButtons}>
+            <View className="flex-row justify-between">
               <TouchableOpacity
-                style={styles.modalCancelButton}
+                className="flex-1 border border-gray-300 rounded-lg p-3 items-center mr-2"
                 onPress={() => setShowDeleteModal(false)}
               >
-                <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                <Text className="text-sm text-gray-700 font-medium">Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
-                  styles.modalDeleteButton,
-                  deleteConfirmation !== 'DELETE' && styles.disabledButton,
-                ]}
+                className={`flex-1 bg-red-500 rounded-lg p-3 items-center ${deleteConfirmation !== 'DELETE' && 'opacity-50'}`}
                 onPress={handleDeleteAccount}
                 disabled={deleteConfirmation !== 'DELETE'}
               >
-                <Text style={styles.modalDeleteButtonText}>Delete Account</Text>
+                <Text className="text-sm text-white font-semibold">Delete Account</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -660,22 +645,22 @@ const SettingsScreen = () => {
 
       {/* Logout Modal */}
       {showLogoutModal && (
-        <View style={styles.modalContainer}>
-          <View style={[styles.modal, styles.glassCard]}>
-            <View style={styles.modalHeader}>
+        <View className="absolute top-0 bottom-0 left-0 right-0 bg-black/50 justify-center items-center p-4">
+          <View className="bg-white/95 rounded-xl p-4 w-11/12 max-w-md shadow shadow-black/10">
+            <View className="flex-row items-center mb-3">
               <Ionicons name="log-out-outline" size={24} color="#F43F5E" />
-              <Text style={styles.modalTitle}>Confirm Logout</Text>
+              <Text className="text-lg font-bold text-gray-900 ml-2">Confirm Logout</Text>
             </View>
-            <Text style={styles.modalText}>Are you sure you want to log out now?</Text>
-            <View style={styles.modalButtons}>
+            <Text className="text-sm text-gray-500 mb-3">Are you sure you want to log out now?</Text>
+            <View className="flex-row justify-between">
               <TouchableOpacity
-                style={styles.modalCancelButton}
+                className="flex-1 border border-gray-300 rounded-lg p-3 items-center mr-2"
                 onPress={() => setShowLogoutModal(false)}
               >
-                <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                <Text className="text-sm text-gray-700 font-medium">Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalLogoutButton} onPress={handleLogout}>
-                <Text style={styles.modalLogoutButtonText}>Log Out</Text>
+              <TouchableOpacity className="flex-1 bg-rose-500 rounded-lg p-3 items-center" onPress={handleLogout}>
+                <Text className="text-sm text-white font-semibold">Log Out</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -684,473 +669,5 @@ const SettingsScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  header: {
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginLeft: 12,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#FEE2E2',
-    marginLeft: 12,
-    marginTop: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  sidebar: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    padding: 12,
-    borderRadius: 12,
-    marginVertical: 8,
-    borderWidth: 1,
-    height:80,
-    borderColor: '#E5E7EB',
-  },
-  navButtonContainer: {
-    marginRight: 8,
-  },
-  sectionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-  },
-  activeSectionButton: {
-    backgroundColor: '#F43F5E',
-  },
-  navIcon: {
-    marginRight: 8,
-  },
-  sectionText: {
-    fontSize: width > 600 ? 16 : 14,
-    color: '#6B7280',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  activeSectionText: {
-    color: '#FFF',
-    fontWeight: '600',
-  },
-  contentContainer: {
-    paddingVertical: 16,
-    paddingHorizontal: 4,
-  },
-  section: {
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FEE2E2',
-  },
-  glassCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  planGradient: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderRadius: 12,
-    opacity: 0.1,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginLeft: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  inputContainer: {
-    position: 'relative',
-    marginBottom: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 14,
-    color: '#1F2937',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  selectIcon: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-  },
-  dropdown: {
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    maxHeight: 150,
-    marginBottom: 12,
-  },
-  option: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  optionText: {
-    fontSize: 14,
-    color: '#1F2937',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  saveButton: {
-    backgroundColor: '#F43F5E',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  saveButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFF',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  deleteButton: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  deleteButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFF',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  modalContainer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  modal: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 12,
-    padding: 16,
-    width: '90%',
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginLeft: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  modalText: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 12,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 14,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalCancelButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  modalCancelButtonText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  modalDeleteButton: {
-    flex: 1,
-    backgroundColor: '#EF4444',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-  },
-  modalDeleteButtonText: {
-    fontSize: 14,
-    color: '#FFF',
-    fontWeight: '600',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  modalLogoutButton: {
-    flex: 1,
-    backgroundColor: '#F43F5E',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-  },
-  modalLogoutButtonText: {
-    fontSize: 14,
-    color: '#FFF',
-    fontWeight: '600',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  disabledButton: {
-    opacity: 0.5,
-  },
-  headerIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FEE2E2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  plansGrid: {
-    flexDirection: width > 600 ? 'row' : 'column',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 16,
-  },
-  planCard: {
-    width: width > 600 ? '48%' : '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FEE2E2',
-    position: 'relative',
-  },
-  disabledCard: {
-    opacity: 0.7,
-  },
-  planHeader: {
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  planIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  planTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  planPriceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  planPrice: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  planDuration: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginLeft: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  features: {
-    marginBottom: 12,
-  },
-  feature: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  featureText: {
-    fontSize: 14,
-    color: '#1F2937',
-    marginLeft: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#F3F4F6',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 4,
-  },
-  statusText: {
-    fontSize: 12,
-    color: '#1F2937',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  subscribeButton: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  subscribeButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFF',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  faqItem: {
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  faqQuestion: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  faqAnswer: {
-    fontSize: 14,
-    color: '#6B7280',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  spinner: {
-    marginBottom: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#6B7280',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginTop: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  errorText: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 4,
-    textAlign: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  retryButton: {
-    backgroundColor: '#F43F5E',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-    alignItems: 'center',
-  },
-  retryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFF',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  alertContainer: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 1,
-    borderColor: '#FCA5A5',
-    borderRadius: 8,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  alertTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#B91C1C',
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-  alertText: {
-    fontSize: 12,
-    color: '#B91C1C',
-    marginTop: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
-  },
-});
 
 export default SettingsScreen;
